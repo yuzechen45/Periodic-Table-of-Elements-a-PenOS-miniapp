@@ -1,125 +1,81 @@
-# miniapp-template
+# 元素周期表 · PenOS 小程序
 
-A GitHub template repository for building **miniapps** on [YouDao Dictionary Pen](https://cidian.youdao.com/pen/) (有道词典笔) devices.
+一个运行在有道词典笔（PenOS / falcon 小程序框架）上的**元素周期表** miniapp，使用 Vue 开发，构建产物为 `.amr` 安装包。
 
-The target hardware runs an **embedded Linux** system (busybox init). The build produces an `.amr` file via a cross-compilation toolchain.
+## 功能特性
 
-## Supported Devices
+- **完整元素周期表**：118 个元素，18 列标准布局，镧系 / 锕系独立成行，按类别着色（碱金属、碱土金属、过渡金属、镧系、锕系、主族金属、类金属、非金属、卤素、稀有气体）
+- **自适应屏幕**：词典笔屏幕 260×640 旋转 270° 后按 640×260 布局，宽度用 flex 百分比自适应，表格可滚动
+- **主页缩放**：0.6× ~ 1.5× 缩放，格子高度与字号联动，缩放值持久保存
+- **内置搜索 + 内置键盘**：设备无实体键盘，内置自制键盘（字母 / 数字双模式），支持按中文名拼音（如 `tie` → 铁）、元素符号、原子序数实时搜索
+- **元素详情页**：符号、名称、拼音、原子量、电负性、价电子数、价电子排布式、电子排布、分类、周期、族、常温物态、来源
+- **设置页**（设置自动保存，返回主页立即生效）：
+  - 主页显示电负性
+  - 主页显示相对原子质量
+  - 主页显示价电子
+  - 主页显示周期（表格左侧周期列）
+  - 主页显示价电子排布式
+- **图例弹层**：10 类元素分类颜色说明
 
-| Device | Architecture |
-|--------|-------------|
-| A6P | ARMv7 (uclibc, bleeding-edge 2018.11) |
-| X5 | ARMv7 (glibc, 2018.11) |
-| P5 | AArch64 (glibc, 2018.11) |
-| S6P | ARMv7 (glibc, 2018.11) |
-
-## Quick Start
-
-1. Click **"Use this template"** → **"Create a new repository"** on GitHub.
-2. Clone your new repository.
-3. Edit `jsapi/src/JSAPI.cpp` to register custom native JS API functions.
-4. Edit `ui/src/pages/index/` to build your UI with Vue.
-5. Push to `main` — GitHub Actions will build `.amr` artifacts for all four devices.
-
-## Directory Structure
+## 目录结构
 
 ```
-├── aiot-vue-cli/       # Vendored build tool (patched for Node.js compatibility)
-├── jsapi/
-│   ├── CMakeLists.txt  # CMake build config for the native C++ library
-│   ├── src/
-│   │   ├── JSAPI.cpp   # ← Register your JS API functions here
-│   │   ├── JSAPI.hpp
-│   │   ├── Fetch.*     # HTTP fetch utilities
-│   │   ├── Database/   # SQLite database helpers
-│   │   ├── Exceptions/ # Exception types
-│   │   ├── AI/         # AI module
-│   │   ├── IME/        # Input method engine
-│   │   ├── ScanInput/  # Scan input handling
-│   │   └── nlohmann/   # JSON library (header-only)
-│   └── toolchains/     # Cross-compiler (downloaded at build time)
-├── tools/
-│   └── build.sh        # Main build script
+├── aiot-vue-cli/          # 构建工具（vendored，aiot-vue-cli@1.0.32）
+├── jsapi/                 # 原生 C++ 库（跨编译工具链，构建时下载）
+├── tools/build.sh         # 构建脚本
 ├── ui/
-│   ├── package.json    # Frontend package config
-│   └── src/
-│       ├── app.js      # Application lifecycle
-│       ├── app.json    # Page routing config
-│       ├── base-page.js
-│       ├── pages/
-│       │   └── index/  # Example index page
-│       └── styles/     # Shared styles
-├── pnpm-lock.yaml      # Dependency lock file
-└── pnpm-workspace.yaml # pnpm workspace config
+│   ├── assets/            # 随包分发的静态资源
+│   ├── src/
+│   │   ├── app.js         # 应用生命周期（模板基类，勿改）
+│   │   ├── app.json       # 页面路由：index / page / settings
+│   │   ├── base-page.js   # 页面基类（模板基类，勿改）
+│   │   ├── components/
+│   │   │   └── KeyBoard.vue    # 内置键盘
+│   │   ├── data/
+│   │   │   └── elements.js     # 118 个元素完整数据
+│   │   ├── pages/
+│   │   │   ├── index/index.vue     # 主页：周期表
+│   │   │   ├── page/page.vue       # 元素详情
+│   │   │   └── settings/settings.vue  # 设置
+│   │   └── styles/        # 共享样式
+│   └── package.json       # 应用元信息（appid、版本、图标）
+├── icon1.png / icon2.png  # 应用图标源文件
+└── .github/workflows/     # CI：AArch64（P5）自动构建 .amr
 ```
 
-## Local Development
+## 构建
 
-### Prerequisites
-
-- **Node.js** 18+
-- **pnpm** (installed via `npm install -g pnpm@latest-10`)
-- **CMake** 3.10+
-- A cross-compilation **toolchain** for your target device (see the table above)
-
-### Manual Build
+### 本地构建（仅 UI 部分）
 
 ```bash
-# 1. Install frontend dependencies
-pnpm install -C ./ui
+# 1. 安装依赖（pnpm 10+，Node 18+）
+pnpm install
 
-# 2. Download & extract toolchain into jsapi/toolchains/
-mkdir -p jsapi/toolchains
-wget -q <TOOLCHAIN_URL> -O jsapi/toolchains/<TOOLCHAIN_FILENAME>
-tar -xjf jsapi/toolchains/<TOOLCHAIN_FILENAME> -C jsapi/toolchains
-
-# 3. Download & extract versionInfo into jsapi/
-wget -q <VERSIONINFO_URL>
-tar -xf <VERSIONINFO_FILENAME> -C jsapi
-
-# 4. Run the build
-./tools/build.sh -a
-
-# The .amr file will be in dist/
+# 2. 构建（生成 ui/8001749644971193.0_0_2.amr）
+pnpm -C ui build
 ```
 
-## Extending: Registering New JSAPI Modules
+> 完整设备构建需在 `jsapi/toolchains/` 放置交叉编译工具链并执行 `./tools/build.sh`（Linux 环境），详见 CI 配置。
 
-Edit `jsapi/src/JSAPI.cpp` and add your module export in `module_init(...)`, then register it via `custom_init_jsapis()`:
+### CI / GitHub Actions
 
-```cpp
-static int module_init(JSContext *ctx, JSModuleDef *m)
-{
-    auto env = JQUTIL_NS::JQModuleEnv::CreateModule(ctx, m, "custom");
+push 到 `main` 后自动构建 **AArch64（P5）** 设备包（`aarch64--glibc` 工具链），产物上传为 workflow artifacts。
 
-    // createMyModule(...) should return a JSValue (usually from a JQPublishObject factory).
-    env->setModuleExport("MyModule", createMyModule(env.get()));
-    env->setModuleExportDone(JS_UNDEFINED, exportList);
-    return 0;
-}
+## 开发注意事项
 
-extern "C" JQUICK_EXPORT void custom_init_jsapis()
-{
-    registerCModuleLoader("custom", &custom_module_load);
-}
-```
+- 样式约束（falcon-styler 校验）：
+  - **只支持单类名选择器**，禁止 `.a .b` 这类后代选择器
+  - `border-radius` 只支持单值（数字或 px）
+  - 字号不宜过小；内容放不下时用 `scroller` 滚动
+- 模板绑定方法时需**带括号调用**（如 `:style="cellRowStyle()"`），否则编译后绑定的是函数对象本身
+- 页面跳转使用 `$falcon.navTo('page', { num: 26 })`，返回用 `this.$page.finish()`
+- 设置持久化使用 `$falcon.jsapi.storage`，主页在 `onShow()` 时重新读取
 
-## CI / GitHub Actions
+## 致谢
 
-The repository includes a unified GitHub Actions workflow (`.github/workflows/build.yml`) that builds for all four devices using a `strategy.matrix`. On every push to `main` (or manual dispatch), it:
+- 基于 [langningchen/miniapp](https://github.com/langningchen/miniapp)（GPL-3.0）模板与 [penosext/miniapp](https://github.com/penosext/miniapp) 的 CI 方案
+- 署名：by yuze, welcome to baigei.cc
 
-1. Installs pnpm and frontend dependencies
-2. Downloads the device-specific toolchain and versionInfo
-3. Runs `tools/build.sh`
-4. Uploads `dist/*.amr` as artifacts (`miniapp-<device>`, retained for 30 days)
+## 许可证
 
-## Acknowledgements
-
-This template is based on the work of:
-
-- **[langningchen/miniapp](https://github.com/langningchen/miniapp)** — The upstream original project (GPL-3.0). The vendored `aiot-vue-cli/` and `tools/build.sh` come directly from this repository.
-- **[penosext/miniapp](https://github.com/penosext/miniapp)** — A community fork with CI workflows supporting multiple devices.
-
-## License
-
-This project is licensed under the [GNU General Public License v3.0](LICENSE).
+[GNU General Public License v3.0](LICENSE)
