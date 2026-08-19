@@ -36,3 +36,6 @@ jsapi/src/IME/rawdict_data.hpp
 
 # macOS
 .DS_Store
+
+# Local backups & large files
+*.zip
