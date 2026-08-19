@@ -1,4 +1,4 @@
-<img width="10%" height="10%" alt="638233980-2bcde239-ea03-4da4-bac8-44363f73b338" src="https://github-production-user-asset-6210df.s3.amazonaws.com/166302605/638233980-2bcde239-ea03-4da4-bac8-44363f73b338.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20260819%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260819T183505Z&X-Amz-Expires=300&X-Amz-Signature=911a1d53f567fc18e9ffa4df7610467bb18ed92eb936c06d4b6c1385094d4d34&X-Amz-SignedHeaders=host&response-content-type=image%2Fpng" />
+<img width="20%" height="20%" alt="638233980-2bcde239-ea03-4da4-bac8-44363f73b338" src="https://github-production-user-asset-6210df.s3.amazonaws.com/166302605/638233980-2bcde239-ea03-4da4-bac8-44363f73b338.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20260819%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260819T183505Z&X-Amz-Expires=300&X-Amz-Signature=911a1d53f567fc18e9ffa4df7610467bb18ed92eb936c06d4b6c1385094d4d34&X-Amz-SignedHeaders=host&response-content-type=image%2Fpng" />
 
 
 # 元素周期表 · PenOS 小程序
