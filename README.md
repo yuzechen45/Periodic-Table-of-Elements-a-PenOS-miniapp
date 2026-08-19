@@ -79,8 +79,7 @@ push 到 `main` 后自动构建 **AArch64（P5）** 设备包（`aarch64--glibc`
 
 ## 致谢
 
-- 基于 [langningchen/miniapp](https://github.com/langningchen/miniapp)（GPL-3.0）模板与 [penosext/miniapp](https://github.com/penosext/miniapp) 的 CI 方案
-- 署名：by yuze, welcome to baigei.cc
+- 基于https://github.com/penosext/miniapp-template的模板
 
 ## 许可证
 
