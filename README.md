@@ -43,6 +43,9 @@
 └── .github/workflows/     # CI：AArch64（P5）自动构建 .amr
 ```
 
+## 截图
+<img width="800" height="254" alt="capture_20260816_114744" src="https://github.com/user-attachments/assets/7791a34f-d99a-451b-885b-9079c59101f9" />
+
 ## 构建
 
 ### 本地构建（仅 UI 部分）
