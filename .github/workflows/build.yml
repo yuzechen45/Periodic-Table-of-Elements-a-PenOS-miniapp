@@ -1,0 +1,47 @@
+name: Build miniapp
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - device: p5
+            toolchain_url: https://github.com/penosext/Cloudpan/releases/download/toolchains/aarch64--glibc--stable-2018.11-1.tar.bz2
+            toolchain_filename: aarch64--glibc--stable-2018.11-1.tar.bz2
+            versioninfo_url: https://github.com/penosext/Cloudpan/releases/download/PenP5/versionInfo_p5.tar.gz
+            versioninfo_filename: versionInfo_p5.tar.gz
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies & toolchain
+        run: |
+          npm install -g pnpm@latest-10
+          pnpm install --verbose -C ./ui
+          mkdir -p ./jsapi/toolchains
+          wget -q "${{ matrix.toolchain_url }}" -O "./jsapi/toolchains/${{ matrix.toolchain_filename }}"
+          tar -xjf "./jsapi/toolchains/${{ matrix.toolchain_filename }}" -C ./jsapi/toolchains
+          wget -q "${{ matrix.versioninfo_url }}"
+          tar -xf "${{ matrix.versioninfo_filename }}" -C ./jsapi
+
+      - name: Build
+        run: ./tools/build.sh -a
+
+      - name: Upload AMR artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: miniapp-${{ matrix.device }}
+          path: dist/*.amr
+          if-no-files-found: error
+          retention-days: 30

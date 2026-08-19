@@ -1,0 +1,14 @@
+{
+  "pages": {
+    "index": "pages/index/index.vue",
+    "page": "pages/page/page.vue",
+    "settings": "pages/settings/settings.vue"
+  },
+  "options": {
+    "style": {
+      "lessPaths": [
+        "styles"
+      ]
+    }
+  }
+}

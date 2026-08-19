@@ -1,0 +1,38 @@
+# Build output
+dist/
+jsapi/build/
+
+# Toolchain (downloaded at build time, not committed)
+jsapi/toolchains/*
+!jsapi/toolchains/.gitkeep
+
+# versionInfo archives (downloaded at build time)
+*.tar.gz
+*.tar.bz2
+
+# Node / pnpm
+node_modules/
+ui/node_modules/
+aiot-vue-cli/node_modules/
+
+# UI build artifacts
+ui/*.amr
+ui/libs/
+ui/dist/
+.falcon_/
+.falcon_tmp/
+
+# VS Code
+.vscode/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+
+# Generated at build time from rawdict_utf16_65105_freq.txt
+jsapi/src/IME/rawdict_data.hpp
+
+# macOS
+.DS_Store

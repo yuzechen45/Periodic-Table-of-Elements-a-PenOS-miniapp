@@ -1,0 +1,2092 @@
+根据阿里云的HaaS UI 完整离线官方文档
+ 
+前置通用说明
+ 
+1. 框架基础：基于 Vue 2.6.12 开发，面向 AIoT 带屏设备的跨平台渐进式 JS 应用框架，一端开发多端运行
+2. CSS 规范：全量支持下文 6 大核心 CSS 样式模块，符合 W3C 标准子集，非支持属性不生效
+3. 语法规则： v-model  双向绑定， @事件名  绑定事件， slot  插槽分发内容，Vue 组件内通过  this.$falcon  访问全局对象，全局上下文可直接调用  $falcon 
+4. 运行环境：支持 AliOS Things、Linux、Windows、MacOS 系统，适配树莓派全系列、全志 D1 等主流 IoT 硬件
+ 
+ 
+ 
+第一部分：HaaS UI 完整 CSS 样式规范（共 6 大核心模块）
+ 
+模块 1：通用基础样式（所有组件全量支持）
+ 
+核心说明
+ 
+全局通用基础属性，控制组件的显隐、层级、定位、溢出规则，所有组件均可直接使用，完全兼容 W3C 标准
+ 
+支持的全量属性
+ 
+属性名 支持值 说明 
+display  flex  /  none  /  block  /  inline-block  组件显示模式，默认  block  
+visibility  visible  /  hidden  组件显隐，隐藏时仍保留占位 
+opacity 0~1 数字 组件透明度，0 为完全透明 
+overflow  visible  /  hidden  /  scroll  /  auto  内容溢出规则，仅固定宽高容器生效 
+z-index 整数 组件堆叠层级，数值越大越靠前 
+position  static  /  relative  /  absolute  /  fixed  定位模式， fixed  相对于屏幕视口定位 
+left / right / top / bottom px 单位 / 百分比 定位偏移量，配合  position  使用 
+pointer-events  auto  /  none  控制组件是否响应点击事件 
+ 
+独有约束
+ 
+-  position: fixed  不受父容器影响，始终相对于设备屏幕定位
+-  overflow: scroll  仅在  scroller  组件或固定宽高的块级容器中生效
+ 
+ 
+ 
+模块 2：文本样式（text 组件核心，全组件通用）
+ 
+核心说明
+ 
+控制文本的显示效果，仅  text  组件原生支持，其他组件内的文本必须嵌套  text  标签才能生效，完全兼容 W3C 标准
+ 
+支持的全量属性
+ 
+属性名 支持值 说明 
+color 十六进制 / rgb / rgba / 标准颜色名 文字颜色 
+font-size px 单位 文字字号，不支持 em/rem 单位 
+font-weight  normal  /  bold  / 400~900 数字 文字粗细 
+font-family 系统支持的字体名 文字字体，默认内置 FreeType2 矢量字库 
+line-height px 单位 文字行高 
+text-align  left  /  center  /  right  文字水平对齐方式 
+text-decoration  none  /  underline  /  line-through  文字装饰线 
+text-overflow  ellipsis  文字溢出省略，需配合  overflow:hidden  +  white-space:nowrap  使用 
+white-space  normal  /  nowrap  文字换行规则 
+ 
+独有约束
+ 
+- 仅支持 px 固定单位，不支持相对单位（em/rem）
+- 非  text  组件无法直接渲染文本，必须嵌套  text  标签
+ 
+ 
+ 
+模块 3：盒模型样式（布局核心，全组件通用）
+ 
+核心说明
+ 
+控制组件的尺寸、内外边距，是页面布局的基础，完全兼容 W3C 标准盒模型
+ 
+支持的全量属性
+ 
+属性名 支持值 说明 
+width px 单位 / 百分比 组件宽度 
+height px 单位 / 百分比 组件高度 
+min-width / max-width px 单位 组件最小/最大宽度 
+min-height / max-height px 单位 组件最小/最大高度 
+margin px 单位 / 百分比 组件外边距，支持 1~4 个值简写 
+margin-left / margin-right / margin-top / margin-bottom px 单位 / 百分比 单方向外边距 
+padding px 单位 / 百分比 组件内边距，支持 1~4 个值简写 
+padding-left / padding-right / padding-top / padding-bottom px 单位 / 百分比 单方向内边距 
+box-sizing  content-box  /  border-box  盒模型模式，默认  content-box  
+ 
+独有约束
+ 
+-  image  组件必须设置固定 width 和 height，不支持百分比宽高
+-  scroller  组件必须设置固定宽高，否则无法触发滚动效果
+ 
+ 
+ 
+模块 4：Flex 布局样式（Layout/div 核心，全容器组件支持）
+ 
+核心说明
+ 
+基于 W3C Flex 标准的弹性布局，是 HaaS UI 推荐的布局方式，所有容器组件（div/Layout）全量支持
+ 
+支持的全量属性
+ 
+容器属性（父元素：div/Layout）
+ 
+属性名 支持值 说明 
+display  flex  开启弹性布局，必填 
+flex-direction  row  /  column  /  row-reverse  /  column-reverse  主轴方向，默认  row  
+justify-content  flex-start  /  center  /  flex-end  /  space-between  /  space-around  主轴对齐方式 
+align-items  flex-start  /  center  /  flex-end  /  stretch  /  baseline  交叉轴对齐方式 
+flex-wrap  nowrap  /  wrap  /  wrap-reverse  换行规则，默认  nowrap  
+align-content  flex-start  /  center  /  flex-end  /  space-between  /  space-around  /  stretch  多根轴线的对齐方式 
+ 
+子项属性（子元素：div/LayoutItem）
+ 
+属性名 支持值 说明 
+flex 数字 子项占比权重，同  flex-grow  
+flex-grow 数字 子项放大比例，默认 0 
+flex-shrink 数字 子项缩小比例，默认 1 
+flex-basis px 单位 子项在主轴上的初始大小 
+align-self  auto  /  flex-start  /  center  /  flex-end  /  stretch  /  baseline  单独设置当前子项的交叉轴对齐方式 
+ 
+独有约束
+ 
+-  Layout  组件的直接子元素必须是 LayoutItem，默认  flex:1  等分布局
+- 不支持 Grid 网格布局，仅支持 Flex 弹性布局
+ 
+ 
+ 
+模块 5：背景与边框样式（全组件通用）
+ 
+核心说明
+ 
+控制组件的背景、边框、圆角效果，完全兼容 W3C 标准子集
+ 
+支持的全量属性
+ 
+属性名 支持值 说明 
+background-color 十六进制 / rgb / rgba / 标准颜色名 背景颜色 
+background-image  url(图片地址)  背景图片，支持本地/网络图片，不支持渐变 
+background-repeat  no-repeat  /  repeat  /  repeat-x  /  repeat-y  背景图片重复规则 
+background-size  cover  /  contain  /  stretch  背景图片缩放规则，同 image 组件 resize 属性 
+background-position  left/center/right top/center/bottom  / px 单位 背景图片定位 
+border  宽度 样式 颜色  边框简写，仅支持 solid 实线样式 
+border-width / border-style / border-color 对应值 单方向边框属性 
+border-left / border-right / border-top / border-bottom 对应值 单方向边框简写 
+border-radius px 单位 圆角，支持 1~4 个值简写，单独设置四个角 
+ 
+独有约束
+ 
+- 不支持 CSS 渐变、阴影、滤镜等高级视觉效果
+- 边框仅支持  solid  实线样式，不支持虚线、点线等其他样式
+ 
+ 
+ 
+模块 6：交互与伪类样式（交互组件核心支持）
+ 
+核心说明
+ 
+控制组件的交互状态样式，适配 IoT 设备的触摸交互场景，兼容 W3C 标准伪类
+ 
+支持的全量伪类
+ 
+伪类名 适用组件 说明 
+:active Button/Checkbox/Radio/Switch 等所有交互组件 点击激活时的样式 
+:disabled 所有可禁用组件 禁用状态下的样式 
+:checked Checkbox/Radio/Switch 选中状态下的样式 
+ 
+支持的交互属性
+ 
+属性名 支持值 说明 
+cursor  pointer  /  default  鼠标样式，仅 Windows/MacOS 端生效 
+user-select  none  /  text  控制文本是否可被选中 
+ 
+独有约束
+ 
+- 不支持  :hover  伪类（IoT 带屏设备无鼠标悬浮场景）
+- 仅交互组件支持伪类样式，基础容器组件不生效
+ 
+ 
+ 
+第二部分：HaaS UI 全量组件完整规范
+ 
+一、6 个内置原生组件（底层渲染核心）
+ 
+1. div
+ 
+组件用途
+ 
+基础块级布局容器，用于页面结构分层、内容包裹，无默认样式，是页面搭建的最基础容器
+ 
+独有属性
+ 
+无
+ 
+独有事件
+ 
+无
+ 
+独有插槽
+ 
+默认插槽：可放置任意子组件、文本内容
+ 
+强制约束
+ 
+无
+ 
+完整可运行示例
+ 
+vue
+  
+<template>
+  <div style="width: 100%; height: 300px; display: flex; justify-content: center; align-items: center; background: #f5f5f5;">
+    <div style="width: 100px; height: 100px; background: #1890ff; border-radius: 8px;"></div>
+  </div>
+</template>
+ 
+ 
+ 
+ 
+2. scroller
+ 
+组件用途
+ 
+原生滚动容器，用于长内容的纵向/横向滚动，性能优先，适配 IoT 设备长列表场景
+ 
+独有属性
+ 
+属性名 类型 默认值 说明 
+scroll-x Boolean false 开启横向滚动 
+scroll-y Boolean true 开启纵向滚动 
+show-scrollbar Boolean true 是否显示滚动条 
+scroll-with-animation Boolean false 滚动时是否开启动画 
+upper-threshold Number 50 距顶部/左边多远时（单位px），触发 scrolltoupper 事件 
+lower-threshold Number 50 距底部/右边多远时（单位px），触发 scrolltolower 事件 
+ 
+独有事件
+ 
+事件名 回调参数 说明 
+@scroll {scrollLeft, scrollTop, scrollWidth, scrollHeight} 滚动时持续触发，返回当前滚动位置 
+@scrolltoupper 无 滚动到顶部/左边时触发 
+@scrolltolower 无 滚动到底部/右边时触发 
+@scrollend 无 滚动结束时触发 
+ 
+独有插槽
+ 
+默认插槽：滚动内容
+ 
+强制约束
+ 
+1. 必须设置固定 width 和 height，否则无法触发滚动效果
+2. 内容宽高必须大于容器宽高，滚动才会生效
+ 
+完整可运行示例
+ 
+vue
+  
+<template>
+  <scroller 
+    scroll-y 
+    show-scrollbar 
+    scroll-with-animation
+    style="width: 320px; height: 400px; border: 1px solid #eee;"
+    @scroll="handleScroll"
+    @scrolltolower="loadMore"
+    @scrollend="handleScrollEnd"
+  >
+    <div v-for="i in 20" :key="i" style="height: 50px; line-height: 50px; border-bottom: 1px solid #f0f0f0; padding-left: 16px;">
+      列表项 {{ i }}
+    </div>
+  </scroller>
+</template>
+
+<script>
+export default {
+  methods: {
+    handleScroll(e) {
+      console.log('当前滚动位置：', e.scrollTop);
+    },
+    loadMore() {
+      console.log('触底加载更多');
+    },
+    handleScrollEnd() {
+      console.log('滚动结束');
+    }
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+3. text
+ 
+组件用途
+ 
+纯文本渲染组件，唯一支持文本样式的原生组件，仅用于展示文字内容
+ 
+独有属性
+ 
+无
+ 
+独有事件
+ 
+无
+ 
+独有插槽
+ 
+默认插槽：仅支持纯文本内容
+ 
+强制约束
+ 
+禁止嵌套任何组件/标签，仅支持纯文本内容
+ 
+完整可运行示例
+ 
+vue
+  
+<template>
+  <text style="font-size: 18px; color: #333; font-weight: 500; line-height: 28px; text-align: center;">
+    HaaS UI 文本组件，仅支持纯文本展示，可自定义所有文本样式
+  </text>
+</template>
+ 
+ 
+ 
+ 
+4. image
+ 
+组件用途
+ 
+图片渲染组件，原生解码，支持网络图、Base64、本地图片，内置 LRU 图片缓存机制
+ 
+独有属性
+ 
+属性名 类型 默认值 说明 
+src String - 必选，图片地址，支持 URL/Base64/require 本地路径 
+resize String stretch 图片缩放模式：stretch(拉伸填充)、cover(裁剪填充)、contain(完整显示) 
+alt String '' 图片加载失败时的占位文字 
+lazy-load Boolean false 是否开启懒加载，仅在 scroller 中生效 
+ 
+独有事件
+ 
+事件名 回调参数 说明 
+@load {success: Boolean, size: {naturalWidth, naturalHeight}} 图片加载完成时触发，返回加载结果和原始尺寸 
+@error 无 图片加载失败时触发 
+ 
+独有插槽
+ 
+无
+ 
+强制约束
+ 
+1. 必须设置固定 width 和 height，不支持百分比宽高
+2. 本地图片必须使用  require()  方式引入
+ 
+完整可运行示例
+ 
+vue
+  
+<template>
+  <image
+    src="https://vuejs.org/images/logo.png"
+    resize="contain"
+    lazy-load
+    style="width: 200px; height: 200px; border-radius: 8px;"
+    @load="handleLoad"
+    @error="handleError"
+  ></image>
+</template>
+
+<script>
+export default {
+  methods: {
+    handleLoad(e) {
+      if (e.success) {
+        console.log('图片加载成功，原始尺寸：', e.size);
+      }
+    },
+    handleError() {
+      console.log('图片加载失败');
+    }
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+5. slider
+ 
+组件用途
+ 
+原生滑动选择器，用于连续数值选择，适配 IoT 设备触摸滑动交互
+ 
+独有属性
+ 
+属性名 类型 默认值 说明 
+min Number 0 最小值 
+max Number 100 最大值 
+step Number 1 步长，必须大于 0 
+v-model Number 0 双向绑定当前选中值 
+disabled Boolean false 是否禁用滑动 
+active-color String #1890ff 滑块选中区域的颜色 
+background-color String #ccc 滑块未选中区域的颜色 
+ 
+独有事件
+ 
+事件名 回调参数 说明 
+@change 当前值 滑动结束/值改变时触发，返回最终值 
+@moving 当前值 滑动过程中持续触发，返回实时值 
+ 
+独有插槽
+ 
+无
+ 
+强制约束
+ 
+必须设置固定宽度
+ 
+完整可运行示例
+ 
+vue
+  
+<template>
+  <div style="padding: 20px;">
+    <slider
+      :min="0"
+      :max="100"
+      :step="5"
+      v-model="sliderVal"
+      active-color="#1890ff"
+      :disabled="false"
+      style="width: 300px; height: 40px;"
+      @change="handleChange"
+      @moving="handleMoving"
+    ></slider>
+    <text style="margin-top: 16px; display: block;">当前选中值：{{ sliderVal }}</text>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      sliderVal: 50
+    }
+  },
+  methods: {
+    handleMoving(val) {
+      console.log('滑动中实时值：', val);
+    },
+    handleChange(val) {
+      console.log('滑动最终值：', val);
+    }
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+6. canvas
+ 
+组件用途
+ 
+2D 画布组件，支持标准 Canvas 2D API，用于自定义图形绘制、特效渲染，支持 GPU 硬件加速
+ 
+独有属性
+ 
+无
+ 
+独有事件
+ 
+无
+ 
+独有插槽
+ 
+无
+ 
+强制约束
+ 
+1. 必须设置固定 width 和 height
+2. 必须在  mounted  生命周期中获取绘图上下文，确保 DOM 渲染完成
+ 
+完整可运行示例
+ 
+vue
+  
+<template>
+  <canvas ref="drawCanvas" style="width: 300px; height: 300px; background: #f5f5f5;"></canvas>
+</template>
+
+<script>
+export default {
+  mounted() {
+    // 获取画布实例和绘图上下文
+    const canvas = this.$refs.drawCanvas;
+    const ctx = canvas.getContext('2d');
+
+    // 绘制蓝色矩形
+    ctx.fillStyle = '#1890ff';
+    ctx.fillRect(50, 50, 200, 200);
+
+    // 绘制白色圆形
+    ctx.beginPath();
+    ctx.arc(150, 150, 60, 0, 2 * Math.PI);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+
+    // 绘制边框
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(50, 50, 200, 200);
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+二、4 个基础通用组件
+ 
+1. Layout / LayoutItem
+ 
+组件用途
+ 
+封装好的 Flex 布局容器，简化页面等分、比例布局写法，适配 IoT 设备不同分辨率屏幕
+ 
+独有属性
+ 
+- Layout 容器：无独有属性，支持所有 Flex 容器 CSS 属性
+- LayoutItem 子项
+属性名 类型 默认值 说明 
+flex Number/String 1 子项占比权重，同 CSS flex 属性 
+ 
+独有事件
+ 
+无
+ 
+独有插槽
+ 
+默认插槽
+ 
+强制约束
+ 
+Layout 组件的直接子元素必须是 LayoutItem
+ 
+完整可运行示例
+ 
+vue
+  
+<template>
+  <Layout style="width: 100%; height: 200px; border: 1px solid #eee;">
+    <LayoutItem flex="1" style="background: #1890ff; display: flex; align-items: center; justify-content: center;">
+      <text style="color: #fff;">占比 1/3</text>
+    </LayoutItem>
+    <LayoutItem flex="2" style="background: #40a9ff; display: flex; align-items: center; justify-content: center;">
+      <text style="color: #fff;">占比 2/3</text>
+    </LayoutItem>
+  </Layout>
+</template>
+ 
+ 
+ 
+ 
+2. Icon
+ 
+组件用途
+ 
+图标渲染组件，统一图标渲染规范，支持位图图标、本地图标、网络图标
+ 
+独有属性
+ 
+属性名 类型 默认值 说明 
+src String - 必选，图标路径，支持 require 本地路径/URL 地址 
+ 
+独有事件
+ 
+无
+ 
+独有插槽
+ 
+无
+ 
+强制约束
+ 
+必须设置固定 width 和 height
+ 
+完整可运行示例
+ 
+vue
+  
+<template>
+  <Icon :src="require('./assets/icon_home.png')" style="width: 32px; height: 32px;"></Icon>
+</template>
+ 
+ 
+ 
+ 
+3. Button
+ 
+组件用途
+ 
+核心交互按钮组件，支持点击事件、禁用状态，适配触摸交互
+ 
+独有属性
+ 
+属性名 类型 默认值 说明 
+disabled Boolean false 是否禁用按钮，禁用后不响应点击事件 
+ 
+独有事件
+ 
+事件名 回调参数 说明 
+@click 无 按钮点击时触发 
+ 
+独有插槽
+ 
+默认插槽：按钮文字/内容
+ 
+强制约束
+ 
+无
+ 
+完整可运行示例
+ 
+vue
+  
+<template>
+  <Button
+    :disabled="false"
+    style="width: 160px; height: 44px; background: #1890ff; color: #fff; border-radius: 6px;"
+    @click="handleClick"
+  >
+    确认按钮
+  </Button>
+</template>
+
+<script>
+export default {
+  methods: {
+    handleClick() {
+      console.log('按钮被点击');
+    }
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+4. Toast
+ 
+组件用途
+ 
+轻量无阻塞提示框，自动消失，用于操作结果、消息提示，JS 函数式调用
+ 
+独有调用参数
+ 
+参数名 类型 默认值 说明 
+message String - 必选，提示文字内容 
+duration Number 2000 提示显示时长，单位 ms 
+position String center 提示显示位置：top/center/bottom 
+ 
+独有事件
+ 
+无
+ 
+强制约束
+ 
+JS 函数调用，非标签组件，无需在 template 中声明
+ 
+完整可运行示例
+ 
+vue
+  
+<template>
+  <Button @click="showToast">显示轻提示</Button>
+</template>
+
+<script>
+import { Toast } from 'haas-ui';
+export default {
+  methods: {
+    showToast() {
+      Toast({
+        message: '操作成功',
+        duration: 2000,
+        position: 'center'
+      });
+    }
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+三、4 个表单交互组件
+ 
+1. Checkbox
+ 
+组件用途
+ 
+复选框组件，支持多选、单选，双向绑定选中状态，用于表单选项配置
+ 
+独有属性
+ 
+属性名 类型 默认值 说明 
+v-model Boolean false 双向绑定选中状态 
+disabled Boolean false 是否禁用复选框 
+checked-color String #1890ff 选中状态的颜色 
+ 
+独有事件
+ 
+事件名 回调参数 说明 
+@change 布尔值 选中状态改变时触发，返回当前状态 
+ 
+独有插槽
+ 
+默认插槽：选项文字
+ 
+强制约束
+ 
+无
+ 
+完整可运行示例
+ 
+vue
+  
+<template>
+  <div style="padding: 16px;">
+    <Checkbox v-model="check1" checked-color="#1890ff" @change="handleCheck">功能选项1</Checkbox>
+    <Checkbox v-model="check2" style="margin-left: 20px;" @change="handleCheck">功能选项2</Checkbox>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      check1: false,
+      check2: true
+    }
+  },
+  methods: {
+    handleCheck(val) {
+      console.log('当前选中状态：', val);
+    }
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+2. RadioGroup + Radio
+ 
+组件用途
+ 
+单选框组组件，实现排他性单选，用于表单单选项配置
+ 
+独有属性
+ 
+- RadioGroup 容器
+属性名 类型 默认值 说明 
+v-model String/Number - 双向绑定当前选中值 
+disabled Boolean false 是否整组禁用 
+- Radio 子项
+属性名 类型 默认值 说明 
+label String/Number - 必选，选项对应的值，与 v-model 绑定 
+disabled Boolean false 是否禁用当前选项 
+checked-color String #1890ff 选中状态的颜色 
+ 
+独有事件
+ 
+事件名 回调参数 说明 
+@change 选中的 label 值 选中值改变时触发，返回当前选中值 
+ 
+独有插槽
+ 
+默认插槽：选项文字
+ 
+强制约束
+ 
+Radio 组件必须嵌套在 RadioGroup 组件内使用
+ 
+完整可运行示例
+ 
+vue
+  
+<template>
+  <RadioGroup v-model="radioVal" @change="handleChange">
+    <Radio label="1" style="margin-right: 20px;" checked-color="#1890ff">模式1</Radio>
+    <Radio label="2">模式2</Radio>
+    <Radio label="3" style="margin-left: 20px;" disabled>模式3（禁用）</Radio>
+  </RadioGroup>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      radioVal: '1'
+    }
+  },
+  methods: {
+    handleChange(val) {
+      console.log('当前选中值：', val);
+    }
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+3. Seekbar
+ 
+组件用途
+ 
+连续调节滑块组件，专为 IoT 设备参数调节设计（如音量、亮度、温度），精度更高
+ 
+独有属性
+ 
+属性名 类型 默认值 说明 
+min Number 0 最小值 
+max Number 100 最大值 
+v-model Number 0 双向绑定当前调节值 
+disabled Boolean false 是否禁用调节 
+active-color String #1890ff 选中区域的颜色 
+background-color String #ccc 未选中区域的颜色 
+ 
+独有事件
+ 
+事件名 回调参数 说明 
+@change 当前值 调节结束/值改变时触发 
+ 
+独有插槽
+ 
+无
+ 
+强制约束
+ 
+必须设置固定宽度
+ 
+完整可运行示例
+ 
+vue
+  
+<template>
+  <div style="padding: 20px;">
+    <text>屏幕亮度：{{ seekVal }}%</text>
+    <Seekbar 
+      :min="0" 
+      :max="100" 
+      v-model="seekVal" 
+      active-color="#1890ff"
+      style="width: 300px; margin-top: 10px;"
+      @change="handleBrightnessChange"
+    ></Seekbar>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      seekVal: 60
+    }
+  },
+  methods: {
+    handleBrightnessChange(val) {
+      console.log('当前亮度：', val);
+      // 调用系统API设置屏幕亮度
+      $falcon.jsapi.device.setBrightness({ value: val });
+    }
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+4. Switch
+ 
+组件用途
+ 
+开关组件，实现开/关二值状态切换，适配 IoT 设备功能启停控制
+ 
+独有属性
+ 
+属性名 类型 默认值 说明 
+v-model Boolean false 双向绑定开关状态 
+open-color String #1890ff 开启状态的背景色 
+close-color String #ccc 关闭状态的背景色 
+disabled Boolean false 是否禁用开关 
+ 
+独有事件
+ 
+事件名 回调参数 说明 
+@change 布尔值 开关状态改变时触发，返回当前状态 
+ 
+独有插槽
+ 
+无
+ 
+强制约束
+ 
+无
+ 
+完整可运行示例
+ 
+vue
+  
+<template>
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <text>设备电源</text>
+    <Switch 
+      v-model="switchVal" 
+      open-color="#1890ff" 
+      close-color="#ccc"
+      @change="handleSwitchChange"
+    ></Switch>
+    <text>{{ switchVal ? '开启' : '关闭' }}</text>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      switchVal: true
+    }
+  },
+  methods: {
+    handleSwitchChange(val) {
+      console.log('设备电源状态：', val ? '开启' : '关闭');
+    }
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+四、2 个反馈弹窗组件
+ 
+1. Popup
+ 
+组件用途
+ 
+非模态自定义弹出层，不阻塞页面其他操作，可承载任意自定义内容，用于浮层展示、菜单弹窗等场景
+ 
+独有属性
+ 
+无
+ 
+独有事件
+ 
+无
+ 
+独有插槽
+ 
+默认插槽：弹出层内容
+ 
+强制约束
+ 
+通过  v-show  /  v-if  控制显隐，需自定义定位样式
+ 
+完整可运行示例
+ 
+vue
+  
+<template>
+  <div>
+    <Button @click="popupShow = true">打开弹出层</Button>
+    <!-- 居中弹出层 -->
+    <Popup 
+      v-show="popupShow"
+      style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 280px; height: 200px; background: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);"
+    >
+      <text style="font-size: 16px; font-weight: 500;">自定义弹出层</text>
+      <text style="margin-top: 20px; display: block;">可放置任意内容</text>
+      <Button style="margin-top: 30px; width: 100%;" @click="popupShow = false">关闭弹出层</Button>
+    </Popup>
+    <!-- 遮罩层 -->
+    <div v-show="popupShow" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: -1;"></div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      popupShow: false
+    }
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+2. Dialog
+ 
+组件用途
+ 
+模态对话框，阻塞页面其他操作，用于重要操作的二次确认、系统提示等场景
+ 
+独有属性
+ 
+属性名 类型 默认值 说明 
+title String 提示 对话框标题 
+ 
+独有插槽
+ 
+插槽名 说明 
+content 对话框内容区域 
+footer 对话框底部按钮区域 
+ 
+强制约束
+ 
+通过  v-show  /  v-if  控制显隐
+ 
+完整可运行示例
+ 
+vue
+  
+<template>
+  <div>
+    <Button @click="dialogShow = true">重启设备</Button>
+    <Dialog 
+      v-show="dialogShow"
+      title="系统提示"
+      style="width: 280px; background: #fff; border-radius: 8px; padding: 20px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 999;"
+    >
+      <div slot="content">
+        <text>确定要重启设备吗？重启后所有业务将中断。</text>
+      </div>
+      <div slot="footer" style="display: flex; justify-content: space-between; margin-top: 30px;">
+        <Button style="width: 100px;" @click="dialogShow = false">取消</Button>
+        <Button style="width: 100px; background: #f5222d; color: #fff;" @click="confirmReboot">确定</Button>
+      </div>
+    </Dialog>
+    <!-- 遮罩层 -->
+    <div v-show="dialogShow" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 998;"></div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      dialogShow: false
+    }
+  },
+  methods: {
+    confirmReboot() {
+      console.log('执行设备重启');
+      // 调用系统API重启设备
+      $falcon.jsapi.system.reboot();
+      this.dialogShow = false;
+    }
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+五、2 个信息展示组件
+ 
+1. Progress
+ 
+组件用途
+ 
+进度条组件，用于展示任务进度、加载进度、设备状态等可视化信息
+ 
+独有属性
+ 
+属性名 类型 默认值 说明 
+percent Number 0 必选，进度值，范围 0~100 
+color String #1890ff 进度条颜色 
+background-color String #f5f5f5 进度条背景色 
+stroke-width Number 6 进度条高度，单位 px 
+ 
+独有事件
+ 
+无
+ 
+独有插槽
+ 
+无
+ 
+强制约束
+ 
+必须设置固定宽度
+ 
+完整可运行示例
+ 
+vue
+  
+<template>
+  <div style="padding: 20px; width: 300px;">
+    <text style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+      <span>固件升级进度</span>
+      <span>{{ progress }}%</span>
+    </text>
+    <Progress 
+      :percent="progress" 
+      color="#1890ff" 
+      :stroke-width="8"
+      style="width: 100%; border-radius: 4px;"
+    ></Progress>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      progress: 65
+    }
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+2. QrCode
+ 
+组件用途
+ 
+二维码生成组件，自动生成标准二维码，适配 IoT 设备配网、信息分享、扫码绑定等场景
+ 
+独有属性
+ 
+属性名 类型 默认值 说明 
+content String - 必选，二维码承载的内容，支持字符串、URL、JSON 字符串 
+size Number 200 二维码尺寸，单位 px 
+foreground-color String #000000 二维码前景色 
+background-color String #ffffff 二维码背景色 
+ 
+独有事件
+ 
+无
+ 
+独有插槽
+ 
+无
+ 
+强制约束
+ 
+必须设置固定宽高，与 size 属性保持一致
+ 
+完整可运行示例
+ 
+vue
+  
+<template>
+  <div style="text-align: center;">
+    <text style="display: block; margin-bottom: 16px; font-size: 16px;">扫码绑定设备</text>
+    <QrCode 
+      :content="qrContent" 
+      :size="200"
+      foreground-color="#1890ff"
+      style="width: 200px; height: 200px; margin: 0 auto;"
+    ></QrCode>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      // 设备配网链接，包含设备ID
+      qrContent: 'https://haas.iot.aliyun.com/device/bind?deviceId=HAAS123456789'
+    }
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+第三部分：$falcon 全局单例对象完整规范
+ 
+一、整体定义
+ 
+ $falcon  是 HaaS UI 框架注入的顶层只读全局单例对象，Vue 组件内可通过  this.$falcon  访问，全局上下文可直接访问，无需额外引入。它是框架所有能力的统一入口，完整包含 6 大核心模块：环境信息、应用实例、系统 JSAPI、离线文档查询工具、全局事件总线、内置工具集。
+ 
+ 
+ 
+二、核心模块 1：$falcon.env 环境信息
+ 
+用途
+ 
+只读属性集合，提供当前运行环境、设备、框架、屏幕的全量静态信息，不可修改
+ 
+全量属性表
+ 
+属性名 类型 示例值 说明 
+platform String  AliOS Things  /  Linux  /  Windows  /  MacOS  当前运行的操作系统平台 
+frameworkVersion String  2.3.0  HaaS UI 框架版本号 
+vueVersion String  2.6.12  框架内置 Vue 版本号 
+screenWidth Number  1280  设备屏幕物理宽度，单位 px 
+screenHeight Number  800  设备屏幕物理高度，单位 px 
+deviceModel String  树莓派4B  /  全志D1  硬件设备型号 
+isDebug Boolean  true  /  false  当前是否为调试模式 
+appId String  com.haas.demo  当前应用的唯一 ID 
+appName String  demo应用  当前应用名称 
+appVersion String  1.0.0  当前应用的版本号 
+ 
+调用示例
+ 
+vue
+  
+<script>
+export default {
+  mounted() {
+    // 打印全量环境信息
+    console.log('完整环境信息：', $falcon.env);
+    // 获取单个属性
+    console.log('设备屏幕分辨率：', $falcon.env.screenWidth, '*', $falcon.env.screenHeight);
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+三、核心模块 2：falcon.app 应用实例
+ 
+用途
+ 
+当前应用的全局运行实例，控制应用生命周期、页面路由、应用管理、热更新等核心应用能力
+ 
+全量属性表
+ 
+属性名 类型 说明 
+isForeground Boolean 只读，当前应用是否在前台运行 
+pageStack Array 只读，当前应用的页面栈数组 
+ 
+全量方法表
+ 
+方法名 入参格式 返回值 说明 
+navigateTo  {url: String}  Promise 保留当前页面，跳转到应用内指定页面，url 为页面相对路径 
+navigateBack  {delta?: Number}  无 关闭当前页面，返回上一页面；delta 为返回层数，默认 1 
+redirectTo  {url: String}  Promise 关闭当前页面，跳转到应用内指定页面，不保留页面栈 
+switchTab  {url: String}  Promise 跳转到 tabBar 页面，关闭其他所有非 tabBar 页面 
+reLaunch  {url: String}  Promise 关闭所有页面，打开应用内指定页面 
+getCurrentPages 无 Array 获取当前页面栈的实例数组 
+exitApp 无 无 退出当前应用，回收应用占用的所有内存资源 
+restartApp 无 无 重启当前应用 
+updateApp  {url: String}  Promise 触发应用热更新，入参为应用更新包的下载地址 
+ 
+调用示例
+ 
+vue
+  
+<script>
+export default {
+  methods: {
+    // 页面跳转
+    goDetail() {
+      $falcon.$app.navigateTo({
+        url: '/pages/device/detail/index'
+      }).catch(err => {
+        console.log('跳转失败：', err);
+      });
+    },
+    // 返回上一页
+    goBack() {
+      $falcon.$app.navigateBack({ delta: 1 });
+    },
+    // 应用热更新
+    async updateApp() {
+      try {
+        await $falcon.$app.updateApp({
+          url: 'https://haas-ota.aliyun.com/demo/update.zip'
+        });
+        console.log('应用更新成功');
+      } catch (err) {
+        console.log('应用更新失败：', err);
+      }
+    }
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+四、核心模块 3：$falcon.jsapi 系统级接口集合
+ 
+用途
+ 
+框架封装的全量系统级 JSAPI，统一入口，一端开发多端兼容，覆盖设备、网络、存储、媒体、UI 交互等 IoT 场景全量能力，所有方法均返回 Promise，支持 async/await 调用
+ 
+全量子模块 & API 表
+ 
+3.1 system 系统模块
+ 
+方法名 入参格式 返回值 说明 
+getSystemInfo 无 Promise 获取完整系统信息，含 CPU、内存、系统版本等 
+exitSystem 无 Promise 退出设备系统（需设备级权限） 
+reboot 无 Promise 重启设备（需设备级权限） 
+sleep  {time: Number}  Promise 设备休眠，time 为休眠时长，单位 ms 
+ 
+3.2 storage 本地存储模块
+ 
+方法名 入参格式 返回值 说明 
+setItem  {key: String, value: String}  Promise 持久化存储键值对，仅支持字符串类型 
+getItem  {key: String}  Promise 获取指定 key 对应的存储值 
+removeItem  {key: String}  Promise 删除指定 key 的存储数据 
+clear 无 Promise 清空当前应用的所有本地存储数据 
+getAllKeys 无 Promise 获取当前应用所有存储的 key 列表 
+ 
+3.3 net 网络模块
+ 
+方法名 入参格式 返回值 说明 
+getNetworkType 无 Promise<{type: String}> 获取当前网络类型： wifi / ethernet / none  
+request  {url: String, method?: String, data?: Object, headers?: Object, timeout?: Number}  Promise 发起 HTTP/HTTPS 请求，method 默认 GET 
+connectWebSocket  {url: String}  WebSocket 实例 建立 WebSocket 长连接 
+ 
+3.4 device 设备控制模块
+ 
+方法名 入参格式 返回值 说明 
+getDeviceInfo 无 Promise 获取设备硬件完整信息，含序列号、硬件版本等 
+setBrightness  {value: Number}  Promise 设置屏幕亮度，value 范围 0~100 
+getBrightness 无 Promise<{value: Number}> 获取当前屏幕亮度 
+setVolume  {value: Number}  Promise 设置设备音量，value 范围 0~100 
+getVolume 无 Promise<{value: Number}> 获取当前设备音量 
+getBatteryInfo 无 Promise<{level: Number, isCharging: Boolean}> 获取电池电量、充电状态 
+ 
+3.5 media 媒体模块
+ 
+方法名 入参格式 返回值 说明 
+playAudio  {url: String, loop?: Boolean}  Promise 播放音频，支持本地/网络音频，loop 默认 false 
+pauseAudio 无 Promise 暂停当前音频播放 
+stopAudio 无 Promise 停止当前音频播放 
+takePhoto 无 Promise<{path: String}> 调用设备摄像头拍照，返回照片本地路径 
+ 
+3.6 ui 系统交互模块
+ 
+方法名 入参格式 返回值 说明 
+showLoading  {message?: String}  无 显示全局阻塞式加载弹窗，message 默认"加载中" 
+hideLoading 无 无 隐藏全局加载弹窗 
+showAlert  {title?: String, content: String, confirmText?: String}  Promise 显示系统级确认弹窗，点击确认后 resolve 
+showConfirm  {title?: String, content: String, confirmText?: String, cancelText?: String}  Promise<{confirm: Boolean}> 显示系统级确认取消弹窗，返回用户选择结果 
+ 
+调用示例
+ 
+vue
+  
+<script>
+export default {
+  methods: {
+    // 本地存储
+    async setStorage() {
+      await $falcon.jsapi.storage.setItem({
+        key: 'deviceId',
+        value: 'HAAS123456789'
+      });
+    },
+    // HTTP 请求
+    async fetchData() {
+      try {
+        const res = await $falcon.jsapi.net.request({
+          url: 'https://haas.iot.aliyun.com/api/device/status',
+          method: 'GET',
+          timeout: 5000
+        });
+        console.log('请求结果：', res);
+      } catch (err) {
+        console.log('请求失败：', err);
+      }
+    },
+    // 调整屏幕亮度
+    async setScreenBright() {
+      await $falcon.jsapi.device.setBrightness({ value: 80 });
+    }
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+五、核心模块 4：$falcon.APIInfo 离线文档查询工具
+ 
+用途
+ 
+框架内置的离线文档查询工具，可查询所有组件、API 的完整规范、属性、事件、示例，完全替代网页文档的查询能力
+ 
+全量方法表
+ 
+方法名 入参格式 返回值 说明 
+query  componentName: String  Object 查询单个组件/API 的完整文档信息，入参为组件/API 名称 
+queryAll 无 Object 查询框架所有组件、JSAPI 的完整文档集合 
+getVersion 无 String 获取当前 HaaS UI 框架的版本号 
+ 
+调用示例
+ 
+vue
+  
+<script>
+export default {
+  mounted() {
+    // 查询 image 组件完整文档
+    const imageDoc = $falcon.APIInfo.query('image');
+    console.log('image 组件属性：', imageDoc.props);
+    console.log('image 组件事件：', imageDoc.events);
+    console.log('image 组件约束：', imageDoc.rules);
+
+    // 查询全量组件文档
+    const allDoc = $falcon.APIInfo.queryAll();
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+六、核心模块 5：$falcon.eventBus 全局事件总线
+ 
+用途
+ 
+全局订阅发布工具，用于跨组件、跨页面的通信，无层级限制，解耦业务逻辑
+ 
+全量方法表
+ 
+方法名 入参格式 说明 
+on  eventName: String, callback: Function  订阅全局事件，事件触发时执行回调函数 
+once  eventName: String, callback: Function  订阅单次全局事件，触发后自动销毁订阅 
+emit  eventName: String, ...args  触发全局事件，可传递任意数量的参数给订阅回调 
+off  eventName: String, callback?: Function  取消订阅；不传 callback 则取消该事件的所有订阅 
+ 
+调用示例
+ 
+vue
+  
+<!-- 页面A：订阅事件 -->
+<script>
+export default {
+  mounted() {
+    // 订阅设备状态变化事件
+    $falcon.eventBus.on('deviceStatusChange', this.handleStatusChange);
+    // 订阅单次事件
+    $falcon.eventBus.once('appUpdate', this.handleUpdate);
+  },
+  beforeDestroy() {
+    // 页面销毁时取消订阅，避免内存泄漏
+    $falcon.eventBus.off('deviceStatusChange', this.handleStatusChange);
+  },
+  methods: {
+    handleStatusChange(status) {
+      console.log('设备状态更新：', status);
+    },
+    handleUpdate() {
+      console.log('应用更新完成');
+    }
+  }
+}
+</script>
+
+<!-- 页面B：触发事件 -->
+<script>
+export default {
+  methods: {
+    changeDeviceStatus() {
+      // 触发全局事件，传递参数
+      $falcon.eventBus.emit('deviceStatusChange', 'online');
+      $falcon.eventBus.emit('appUpdate');
+    }
+  }
+}
+</script>
+ 
+ 
+ 
+ 
+七、核心模块 6：$falcon.utils 内置工具集
+ 
+用途
+ 
+框架内置的高频通用工具函数，无需额外引入第三方工具库，适配 IoT 设备低资源特性
+ 
+全量方法表
+ 
+方法名 入参格式 返回值 说明 
+deepClone  target: Object/Array  Object/Array 深拷贝对象/数组，解决引用类型赋值问题 
+debounce  func: Function, delay: Number  Function 防抖函数，delay 为延迟时长，单位 ms 
+throttle  func: Function, delay: Number  Function 节流函数，delay 为节流间隔，单位 ms 
+formatTime  timestamp: Number, format: String  String 格式化时间戳，format 示例： YYYY-MM-DD HH:mm:ss  
+isEmpty  value: any  Boolean 判断值是否为空：空对象、空数组、空字符串、null、undefined 均返回 true 
+ 
+ 
+ 
+八、通用强制约束
+ 
+1.  $falcon  为只读全局对象，禁止直接修改其挂载的属性、方法、子模块，否则会导致框架运行异常
+2. 设备级 API（如  reboot 、 setBrightness 、 exitSystem ）需要设备系统权限，无权限调用会返回失败
+3. 所有  $falcon.jsapi  下的方法均返回 Promise，建议使用  async/await  语法捕获异常
+4. 全局事件订阅后，必须在页面/组件销毁时取消订阅，避免内存泄漏
+
+最后你写完需要进行报错检测，我要可以一次性编译通过。注意：
+1.使用设备屏幕是260x640，但是默认旋转270度,因此布局按照640x260
+3.可以参考https://haas.iot.aliyun.com/haasui-doc/development
+4.这个东西它会默认先打开index(需要编译的时候有pages/index/index.vue和pages/page/page.vue)，，而且这东西还没有键盘，你写个内置键盘，从而方便我使用，重新重构，同样写完了，一定检验看看是否能正常构建
+5.example是他生成的初始的hello world,那个才是标准，虽然说它有很多功能可能没有放，但是大体不用动，以下是example的内容:
+
+┌──(kali㉿localhost)-[~]
+└─$ aiot-cli c example
+cli版本: aiot-vue-cli@1.0.32
+正在执行 c example
+(node:11577) [DEP0111] DeprecationWarning: Access to process.binding('http_parser') is deprecated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:11577) [DEP0111] DeprecationWarning: Access to process.binding('http_parser') is deprecated.
+创建成功,可以使用以下命令初始化应用:
+cd example
+cnpm install
+
+
+┌──(kali㉿localhost)-[~]
+└─$ cd example/
+
+┌──(kali㉿localhost)-[~/example]
+└─$ pnpm install
+Packages: +2
+++
+Progress: resolved 2, reused 2, downloaded 0, added 2, done
+
+dependencies:
++ falcon-ui 2.0.2
+
+Done in 4.7s using pnpm v10.30.1
+
+┌──(kali㉿localhost)-[~/example]
+└─$ ls
+api-mock  node_modules  package.json  pnpm-lock.yaml  src
+
+┌──(kali㉿localhost)-[~/example]
+└─$ cat package.json
+{
+  "name": "example",
+  "appid": "8001771811724913",
+  "version": "1.0.0",
+  "description": "hello",
+  "quickjs": {
+    "version": "20200705",
+    "bigNum": false
+  },
+  "simulator": {
+    "path": "",
+    "page": ""
+  },
+  "single-js-bundle": false,
+  "scripts": {
+    "start": "aiot-cli preview",
+    "build": "aiot-cli -p",
+    "build:dev": "aiot-cli",
+    "build:bin": "aiot-cli -q -p",
+    "build:prod": "aiot-cli -c -q -p",
+    "build:bin-nopack": "aiot-cli -q",
+    "build:web": "aiot-cli build-web",
+    "build:simulator": "aiot-cli simulator ./",
+    "upload": "aiot-cli upload -n",
+    "check": "aiot-cli check",
+    "check:beta": "aiot-cli check -b"
+  },
+  "keywords": [
+    "iot",
+    "miniapp"
+  ],
+  "devDependencies": {},
+  "dependencies": {
+    "falcon-ui": "^2.0.2"
+  }
+}
+┌──(kali㉿localhost)-[~/example]
+└─$ cd src/
+
+┌──(kali㉿localhost)-[~/example/src]
+└─$ ls
+app.js  app.json  base-page.js  components  pages  styles
+
+┌──(kali㉿localhost)-[~/example/src]
+└─$ tree && find . -type f -exec cat {} \;
+.
+├── app.js
+├── app.json
+├── base-page.js
+├── components
+│   └── HelloWorld.vue
+├── pages
+│   ├── index
+│   │   └── index.vue
+│   └── page
+│       └── page.vue
+└── styles
+    ├── base.less
+    ├── mixin.less
+    └── var.less
+
+6 directories, 9 files
+const DEBUG = false
+function _collectFalconEventIds(name, callback)
+{
+  const evtList = $falcon.eventMap[name]
+  if (evtList) {
+    if (callback) {
+      const index = evtList.findIndex(item => item.callback === callback || item.id === callback);
+      if (index !== -1) {
+        return [evtList[index].id]
+      }
+    } else {
+      return evtList.map((item) => item.id)
+    }
+  }
+  return []
+}
+
+class PageRes extends $falcon.Page {
+  constructor() {
+    super()
+    this.falconOnTokens = []  // [[token, name], ...]
+    this.timeoutTokens = new Set()  // [token, ...]
+    this.intervalTokens = new Set()  // [token, ...]
+  }
+
+  on(name, callback) {
+    const token = $falcon.on(name, callback)
+    this.falconOnTokens.push([token, name])
+    return token
+  }
+
+  off(name, callback) {
+    const falconOnTokens2 = []
+    let idsWillRemoved = _collectFalconEventIds(name, callback)
+    DEBUG && console.log(`idsWillRemoved ${JSON.stringify(idsWillRemoved)}`)
+    idsWillRemoved = new Set(idsWillRemoved)
+    for (let [token, name] of this.falconOnTokens) {
+      if (idsWillRemoved.has(token)) {
+        continue
+      }
+      falconOnTokens2.push([token, name])
+    }
+    this.falconOnTokens = falconOnTokens2
+
+    $falcon.off(name, callback)
+  }
+  trigger(name, options) {
+    $falcon.trigger(name, options)
+  }
+  setTimeout(func, ms) {
+    const token = setTimeout(() => {
+      this.timeoutTokens.delete(token)
+      func()
+    }, ms)
+    this.timeoutTokens.add(token)
+    return token
+  }
+  setInterval(func, ms) {
+    const token = setInterval(func, ms)
+    this.intervalTokens.add(token)
+    return token
+  }
+  clearTimeout(token) {
+    this.timeoutTokens.delete(token)
+    clearTimeout(token)
+  }
+  clearInterval(token) {
+    this.intervalTokens.delete(token)
+    clearInterval(token)
+  }
+  release() {
+    for (let [token, name] of this.falconOnTokens) {
+      DEBUG && console.log(`release $falcon.on token ${token}`)
+      $falcon.off(name, token)
+    }
+    this.falconOnTokens.length = 0
+    for (let token of this.timeoutTokens) {
+      DEBUG && console.log(`release setTimeout token ${token}`)
+      clearTimeout(token)
+    }
+    this.timeoutTokens.clear()
+    for (let token of this.intervalTokens) {
+      DEBUG && console.log(`release setInterval token ${token}`)
+      clearInterval(token)
+    }
+    this.intervalTokens.clear()
+  }
+}
+
+export class BasePage extends PageRes {
+  /**
+   * 构造函数,页面生命周期内只执行一次
+   */
+  constructor() {
+    super()
+  }
+
+  // some Util
+  async sleep(ms) {
+    return new Promise((resolve) => {
+      this.setTimeout(() => {
+        resolve()
+      }, ms)
+    })
+  }
+
+
+  /**
+   * 页面生命周期:首次启动
+   * @param Object options 页面启动参数
+   */
+  onLoad(options) {
+    super.onLoad(options)
+    this.options = options
+  }
+
+  /**
+   * 页面生命周期:页面重新进入
+   * 其他应用或者系统通过$falcon.navTo()方法重新启动页面.可以通过这个回调拿到新启动的参数
+   * @param Object options 重新启动参数
+   */
+  onNewOptions(options) {
+    super.onNewOptions(options)
+    this.options = options
+  }
+
+  /**
+   * 页面生命周期:页面进入前台
+   */
+  onShow() {
+    super.onShow()
+
+    //onshow以后组件才创建,可以调用组件的方法
+    if (this.$root.onShow) {
+      this.$root.onShow()
+    }
+  }
+
+  /**
+   * 页面生命周期:页面进入后台
+   */
+  onHide() {
+    super.onHide()
+    if (this.$root.onHide) {
+      this.$root.onHide()
+    }
+  }
+
+  /**
+   * 页面生命周期:页面卸载
+   */
+  onUnload() {
+    try {
+      super.onUnload()
+      if (this.$root.onUnload) {
+        this.$root.onUnload()
+      }
+    } finally {
+      if (this.release) {
+        // to call PageRes release method
+        this.release()
+      }
+    }
+  }
+
+  beforeVueInstantiate(Vue) {
+    try {
+      Vue.prototype.$workspace = globalThis.$workspace
+      Vue.prototype.$appid = globalThis.$appid
+    } catch (err) {
+      console.log(err)
+    }
+  }
+}
+{
+  "pages": {
+    "index": "pages/index/index.vue",
+    "page": "pages/page/page.vue"
+  },
+  "options": {
+      "style": {
+          "lessPaths": ["styles"]
+      }
+  }
+}
+/*
+ * 定义样式变量.
+ */
+
+// base
+@text-color-default: #34495e;
+
+// border
+@border-color-default: #ebedf0;
+@border-radius-default: 20px;
+@border-width-default: 1px;
+@border-style-default: solid;
+
+// transition
+@transition-duration-default: 300ms;
+
+// gradient
+@gradient-direction-default: to right;
+
+//shadow
+@shadow-h-default: 0px;
+@shadow-v-default: 0px;
+@shadow-radius-default: 5px;
+@shadow-color-default: #646566;
+/*
+ * 部分样式不支持缩写,可使用此处提供的常用mixin
+ */
+@import "./var.less";
+#border(@width: @border-width-default, @style: @border-style-default, @color: @border-color-default, @radius: @border-radius-default) {
+  border-width: @width;
+  border-style: @style;
+  border-color: @color;
+  border-radius: @radius;
+}
+#border-top(@width: @border-width-default, @style: @border-style-default, @color: @border-color-default) {
+  border-top-width: @width;
+  border-top-style: @style;
+  border-top-color: @color;
+}
+
+#transition(@property: all, @duration:@transition-duration-default, @function:linear, @delay:0) {
+  transition-property: @property;
+  transition-duration: @duration;
+  transition-timing-function: @function;
+  transition-delay: @delay;
+}
+
+// 只支持 "背景" 且 "线性" 渐变
+// 用法:#bg-linear-gradient(to right/0deg; red 0%,blue 50%, green 60%,...);
+#bg-linear-gradient(@direction: @gradient-direction-default, @color-stops) {
+  background-image: linear-gradient(@direction, @color-stops);
+}
+
+// 不支持内阴影(inset),暂不支持模糊距离
+#shadow(@h-shadow:@shadow-h-default, @v-shadow:@shadow-v-default, @radius:@shadow-radius-default, @color:@shadow-color-default) {
+  box-shadow: @h-shadow @v-shadow @radius @color;
+}
+
+#text() {
+  font-size: 16px;
+  color: @text-color-default;
+}
+@import './var.less';
+@import './mixin.less';
+
+.text {
+  #text();
+}
+
+.wrapper {
+  justify-content: center;
+  align-items: center;
+}
+
+.btn {
+  margin: 10px;
+  padding: 0 20px;
+  font-size: 24px;
+  color: #727272;
+  border-radius: 6px;
+}
+
+.btn:active {
+  #shadow();
+}
+<template>
+  <text class="text">Now, let's use Vue.js to build your iot app</text>
+</template>
+<script>
+
+export default {
+  name: "HelloComponent",
+  components: {},
+  data() {
+    return {
+      msg:''
+    };
+  },
+  methods: {
+  },
+};
+</script>
+
+<style lang="less" scoped>
+@import "base.less";
+</style>
+<template>
+  <div class="wrapper">
+    <text class="greeting">Multi-page application</text>
+    <div style="row-gap: 10px;">
+      <text class="text">{{ dateStr }}</text>
+      <text class="text">options "from": {{ $page.options['from']}}</text>
+    </div>
+
+    <div style="flex-direction: row; margin-top: 20px;">
+      <text class="btn" @click="jump">back</text>
+      <text class="btn" @click="finishPage">finish</text>
+    </div>
+  </div>
+</template>
+
+<script>
+function formatDateTimeStr(now)
+{
+  const year = now.getFullYear();
+  const month = (now.getMonth() + 1).toString().padStart(2, '0');
+  const day = now.getDate().toString().padStart(2, '0');
+  const hour = now.getHours().toString().padStart(2, '0');
+  const minute = now.getMinutes().toString().padStart(2, '0');
+  const second = now.getSeconds().toString().padStart(2, '0');
+
+  return `${year}-${month}-${day} ${hour}:${minute}:${second}`
+}
+
+export default {
+  name: 'page',
+  data() {
+    return {
+      dateStr: formatDateTimeStr(new Date()),
+    }
+  },
+  mounted() {
+    // this.$page.setInterval 创建的 timer 在页面退出时会自动释放, 在 base-page.js 中统一管理
+    this.$page.setInterval(() => this.dateStr = formatDateTimeStr(new Date()) , 1000)
+  },
+  methods: {
+    onShow() {
+      // 页面显示生命周期, 此时可获取页面参数, 在 base-page.js 中统一调度
+      console.log(`options ${JSON.stringify(this.$page.options)}`)
+    },
+    jump() {
+      $falcon.navTo('index', { from: 'page' })
+    },
+    finishApp() {
+      this.$app.finish()
+    },
+    finishPage() {
+      this.$page.finish()
+    },
+  },
+}
+
+</script>
+
+<style lang="less" scoped>
+@import "base.less";
+
+.greeting {
+  text-align: center;
+  margin: 20px 0px;
+  font-size: 34px;
+  color: #41b883;
+}
+
+</style>
+<template>
+  <div class="wrapper">
+    <text class="greeting">{{ message }}, falcon!</text>
+    <hello-world />
+    <text class="btn" @click="jump">click to the next page</text>
+  </div>
+</template>
+
+<script>
+import HelloWorld from '@/components/HelloWorld.vue'
+export default {
+  name: 'index',
+  components: { HelloWorld },
+  data() {
+    return {
+      message: '',
+    }
+  },
+  methods: {
+    onShow() {
+      this.message = 'Hello'
+    },
+    onHide() {
+      console.log(`onHide called`)
+    },
+    jump() {
+      $falcon.navTo('page', { from: 'index' })
+    },
+  },
+}
+</script>
+
+<style lang="less" scoped>
+@import "base.less";
+
+.greeting {
+  text-align: center;
+  margin: 20px 0px;
+  font-size: 50px;
+  color: #41b883;
+}
+
+</style>
+import { BasePage } from './base-page.js'
+class App extends $falcon.App {
+  /**
+   * 构造函数,应用生命周期内只构造一次
+   */
+  constructor() {
+    super()
+  }
+
+  /**
+   * 应用生命周期:应用启动. 初始化完成时回调,全局只触发一次.
+   * @param {Object} options 启动参数
+   */
+  onLaunch(options) {
+    super.onLaunch(options)
+    // 屏幕分辨率适配机制:
+    // 当 viewPort 设置750时, 所有元素尺寸可按照设计稿为 750px 宽度标准编写,
+    // 最后系统会动态计算屏幕实际尺寸并显示.
+    // this.setViewPort(750)
+
+    // 设置页面基类,应用全局的$falcon.Page将被替换成此处指定的BasePage.
+    // 继承自$falcon.Page的页面将继承自改基类.
+    // 如页面未指定js,直接指向.vue文件,页面创建时会默认创建该类的实例
+    $falcon.useDefaultBasePageClass(BasePage)
+  }
+
+  /**
+   * 应用生命周期,应用启动或应用从后台切换到前台时触发
+   */
+  onShow() {
+    super.onShow()
+  }
+
+  /**
+   * 应用生命周期:应用退出前或者应用从前台切换到后台时触发
+   */
+  onHide() {
+    super.onHide()
+  }
+
+  /**
+   * 应用生命周期:应用销毁前触发
+   */
+  onDestroy() {
+    super.onDestroy()
+  }
+}
+
+try {
+  globalThis['window'] = {
+    requestAnimationFrame,
+    cancelAnimationFrame
+  }
+} catch (err) {
+  console.log(err)
+}
+
+try {
+  globalThis['process'] = {
+    env: {
+      NODE_ENV: 'production'
+    }
+  }
+} catch (err) {
+  console.log(err)
+}
+
+export default App
+
+┌──(kali㉿localhost)-[~/example/src]
+└─$对于这个的话src/app.js和src/base-page.js你无需修改它,通常容易遇到这些错误，你要避免
+1.pages/page/page.vue?scopeId=data-v-38915e8a&aiot-vue-cli=styles.0.less:75-1
+ERROR: Selector `.msg-row-self .msg-content` is not supported. Weex only support single-classname selector
+pages/page/page.vue?scopeId=data-v-38915e8a&aiot-vue-cli=styles.0.less:111-1
+ERROR: Selector `.msg-bubble-self .msg-text` is not supported. Weex only support single-classname selector
+components/TabBar.vue?scopeId=data-v-42921124&aiot-vue-cli=styles.0.less:15-1
+ERROR: Selector `.tabbar-item-active .tabbar-icon` is not supported. Weex only support single-classname selector
+components/TabBar.vue?scopeId=data-v-42921124&aiot-vue-cli=styles.0.less:15-1
+ERROR: Selector `.tabbar-item-active .tabbar-label` is not supported. Weex only support single-classname selector
+pages/page/page.vue?scopeId=data-v-38915e8a&aiot-vue-cli=styles.0.less:150-3
+ERROR: property value `0px 8px 8px 8px` is not supported for `border-radius` (only number and pixel values are supported)
+pages/page/page.vue?scopeId=data-v-38915e8a&aiot-vue-cli=styles.0.less:161-3
+ERROR: property value `8px 0px 8px 8px` is not supported for `border-radius` (only number and pixel values are supported)
+2.考虑屏幕大小，不要让字体太小
+4.很多界面放不下，必须做一个滑动
+最后用中文重构，不要忘记结构
