@@ -1,4 +1,4 @@
-<img width="100%" height="100%" alt="638233980-2bcde239-ea03-4da4-bac8-44363f73b338" src="https://github.com/user-attachments/assets/f50ca6c6-3603-40e5-b584-7c5fb930d16c" />
+<img width="10%" height="10%" alt="638233980-2bcde239-ea03-4da4-bac8-44363f73b338" src="https://github.com/user-attachments/assets/f50ca6c6-3603-40e5-b584-7c5fb930d16c" />
 
 
 # 元素周期表 · PenOS 小程序
