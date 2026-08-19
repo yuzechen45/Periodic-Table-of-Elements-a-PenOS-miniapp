@@ -1,3 +1,5 @@
+<img width="1254" height="1254" alt="icon2" src="https://github.com/user-attachments/assets/2bcde239-ea03-4da4-bac8-44363f73b338" />
+
 # 元素周期表 · PenOS 小程序
 
 一个运行在有道词典笔（PenOS / falcon 小程序框架）上的**元素周期表** miniapp，使用 Vue 开发，构建产物为 `.amr` 安装包。
