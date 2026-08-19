@@ -79,7 +79,8 @@ push 到 `main` 后自动构建 **AArch64（P5）** 设备包（`aarch64--glibc`
 
 ## 致谢
 
-- 基于https://github.com/penosext/miniapp-template的模板
+- 基于https://github.com/penosext/miniapp-template
+
 
 ## 许可证
 
